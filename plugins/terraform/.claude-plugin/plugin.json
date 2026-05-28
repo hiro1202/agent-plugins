@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "terraform",
+  "displayName": "Terraform ツールボックス",
+  "version": "0.1.0",
+  "description": "Hirokazu Funaki 個人用の Terraform ヘルパー。まずは code-review スキルから。",
+  "author": {
+    "name": "Hirokazu Funaki"
+  },
+  "license": "MIT",
+  "keywords": ["terraform", "iac", "review"]
+}
