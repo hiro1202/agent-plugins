@@ -1,0 +1,79 @@
+# agent-plugins
+
+> **Note:** `CLAUDE.md` はこのファイルへのシンボリックリンクです。編集は `AGENTS.md` だけに行えば、Claude Code（`CLAUDE.md`）と Codex（`AGENTS.md`）の両方に反映されます。
+
+Hirokazu Funaki 個人用の、AI コーディングエージェント向けプラグイン集です。**Claude Code** と **OpenAI Codex** の両方に対応します。これはそのリポジトリで作業するエージェント向けのコンテキストファイルです。利用者・コントリビューター向けの手順は [`README.md`](./README.md) を参照してください。
+
+## コアコンセプト
+
+| 概念 | 中身 | 例 |
+| --- | --- | --- |
+| **Plugin** | 配布単位のバンドル（スキル等をまとめたもの） | `terraform`、`aws` |
+| **Skill** | ユーザーの意図に応じて自動起動する指示書（YAML フロントマターの `description` で判定） | 「この Terraform をレビューして」→ `code-review` スキル |
+| **Marketplace** | プラグインのカタログ（インストール元） | `agent-plugins` |
+
+### 設計上の要点：スキルは自動起動する
+
+スキルは固定のスラッシュコマンド**ではありません**。エージェントが `SKILL.md` のフロントマター `description` を読み、ユーザーの意図に一致したときに自分で呼び出します。したがって `description` は「いつ使うか」が伝わるように書きます。
+
+### 設計上の要点：スキル本体は両エージェントで共有
+
+`plugins/<name>/skills/.../SKILL.md` が唯一の正本です。Claude Code と Codex で内容を複製しません。エージェントごとに分けるのは**カタログとマニフェストだけ**です（[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) の方式に準拠）。
+
+## ディレクトリ構成
+
+```
+agent-plugins/
+├── AGENTS.md                     # このファイル（エージェント向けコンテキスト）
+├── CLAUDE.md                     # → AGENTS.md へのシンボリックリンク
+├── README.md                     # 利用者・コントリビューター向け手順書
+├── .claude-plugin/
+│   └── marketplace.json          # Claude Code 用カタログ
+├── .agents/
+│   └── plugins/marketplace.json  # Codex 用カタログ
+└── plugins/                      # プラグイン本体（スキルは両エージェントで共有）
+    ├── terraform/
+    │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
+    │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
+    │   └── skills/code-review/SKILL.md
+    └── aws/
+        ├── .claude-plugin/plugin.json
+        ├── .codex-plugin/plugin.json
+        └── skills/cost-estimate/SKILL.md
+```
+
+## 同梱プラグイン
+
+| プラグイン | スキル | 内容 |
+| --- | --- | --- |
+| `terraform` | `code-review` | Terraform コード（.tf / .tfvars）をセキュリティ・ベストプラクティス・運用観点でレビューする（読み取り専用）。 |
+| `aws` | `cost-estimate` | 説明文や IaC ファイルから月額 AWS コストを見積もる。 |
+
+## 新しいプラグイン／スキルを追加するときの手順
+
+1. `plugins/<name>/skills/<skill>/SKILL.md` を作る。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く。
+2. `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json` を作る。`name` と `version` は 2 ファイルで一致させる。
+3. `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にプラグインのエントリを追加する。
+4. バリデーションを実行する（下記）。
+5. README の「同梱プラグイン」表を更新する。
+
+## バリデーション
+
+```bash
+# Claude Code 用マニフェスト
+claude plugin validate ./plugins/<name> --strict
+
+# Codex 用カタログ（読み込めることを確認。隔離環境で実行）
+CODEX_HOME="$(mktemp -d)" codex plugin marketplace add "$(pwd)"
+
+# JSON の妥当性
+python3 -m json.tool <file.json> >/dev/null
+```
+
+## 規約・境界
+
+- スキル本体は `SKILL.md` を唯一の正本とし、エージェント間で複製しない。
+- `version` を変更するときは `.claude-plugin/plugin.json` と `.codex-plugin/plugin.json` を必ず揃える（SemVer）。
+- スキルはレビュー／見積もりなど読み取り中心。`terraform apply` やコスト確定など破壊的・確定的な操作はユーザーの明示的な依頼まで行わない。各スキルの「原則」セクションに従う。
+- CHANGELOG は管理しない。変更履歴は Git のコミット履歴を正とする。
+- 既存ファイルを大きく変更する前にはユーザーに一声かける。
