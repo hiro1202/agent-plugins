@@ -42,6 +42,19 @@ agent-plugins/
         └── skills/cost-estimate/SKILL.md
 ```
 
+## 共通化の方針（何を共有し、何を分けるか）
+
+Claude Code と Codex で内容が同じになるものは 1 ソースに寄せ、エージェント固有のものだけ分けます。判断基準は「スキーマ／構文がエージェント間で同一か」です。
+
+| 対象 | 方式 | 理由 |
+| --- | --- | --- |
+| エージェント指示書（`AGENTS.md` / `CLAUDE.md`） | **シンボリックリンクで共有**（`CLAUDE.md` → `AGENTS.md`） | 同じ Markdown。Codex は `AGENTS.md`、Claude Code は `CLAUDE.md` を読むだけで中身は同一。[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) でも唯一の symlink。 |
+| スキル本体（`SKILL.md`、`references/`） | **単一ソースで共有**（両マニフェストが `./skills/` を参照） | 形式が共通。複製しない。 |
+| マーケットプレースカタログ | **エージェントごとに別ファイル** | スキーマが異なる（Claude=`source` 文字列＋`keywords`/`tags`、Codex=`source` オブジェクト＋`policy`）。symlink 不可。 |
+| プラグインマニフェスト（`plugin.json`） | **エージェントごとに別ファイル** | Codex 側に `interface` / `skills` / `mcpServers` が増える。共通フィールド（`name`/`version` 等）は手で揃える。 |
+
+> 結論: symlink で共通化できる指示書は `AGENTS.md` / `CLAUDE.md` の 1 組のみ。カタログとマニフェストはスキーマ差のため別管理が正しい（参考リポも同様）。新しい指示書フォーマットを読む別エージェントを足す場合は、同様に `AGENTS.md` へのシンボリックリンクを増やす。
+
 ## 同梱プラグイン
 
 | プラグイン | スキル | 内容 |
