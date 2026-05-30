@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "aws",
+  "displayName": "AWS ツールボックス",
+  "version": "0.1.0",
+  "description": "Hirokazu Funaki 個人用の AWS ヘルパー。まずは cost-estimate スキルから。",
+  "author": {
+    "name": "Hirokazu Funaki"
+  },
+  "license": "MIT",
+  "keywords": ["aws", "cost", "pricing", "estimate"]
+}

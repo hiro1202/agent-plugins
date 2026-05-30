@@ -1,0 +1,23 @@
+{
+  "name": "cc-toolbox",
+  "description": "Hirokazu Funaki 個人用の Claude Code プラグイン集（Terraform、AWS）。",
+  "owner": {
+    "name": "Hirokazu Funaki"
+  },
+  "plugins": [
+    {
+      "name": "terraform",
+      "source": "./plugins/terraform",
+      "description": "Terraform 向けユーティリティ集。現在は code-review スキルを同梱。",
+      "category": "iac",
+      "tags": ["terraform", "iac", "review"]
+    },
+    {
+      "name": "aws",
+      "source": "./plugins/aws",
+      "description": "AWS 向けユーティリティ集。現在は cost-estimate スキルを同梱。",
+      "category": "cloud",
+      "tags": ["aws", "cost", "pricing"]
+    }
+  ]
+}
