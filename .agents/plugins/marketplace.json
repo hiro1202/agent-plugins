@@ -1,0 +1,32 @@
+{
+  "name": "agent-plugins",
+  "interface": {
+    "displayName": "agent-plugins"
+  },
+  "plugins": [
+    {
+      "name": "terraform",
+      "source": {
+        "source": "local",
+        "path": "./plugins/terraform"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Infrastructure"
+    },
+    {
+      "name": "aws",
+      "source": {
+        "source": "local",
+        "path": "./plugins/aws"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Cloud"
+    }
+  ]
+}

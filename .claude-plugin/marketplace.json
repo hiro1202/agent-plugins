@@ -1,5 +1,5 @@
 {
-  "name": "cc-toolbox",
+  "name": "agent-plugins",
   "description": "Hirokazu Funaki 個人用の Claude Code プラグイン集（Terraform、AWS）。",
   "owner": {
     "name": "Hirokazu Funaki"
