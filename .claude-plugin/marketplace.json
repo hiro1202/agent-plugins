@@ -1,6 +1,9 @@
 {
   "name": "agent-plugins",
-  "description": "Hirokazu Funaki 個人用の Claude Code プラグイン集（Terraform、AWS）。",
+  "metadata": {
+    "description": "Hirokazu Funaki 個人用の Claude Code プラグイン集（Terraform、AWS）。",
+    "version": "0.1.0"
+  },
   "owner": {
     "name": "Hirokazu Funaki"
   },
@@ -9,6 +12,7 @@
       "name": "terraform",
       "source": "./plugins/terraform",
       "description": "Terraform 向けユーティリティ集。現在は code-review スキルを同梱。",
+      "version": "0.1.0",
       "category": "iac",
       "tags": ["terraform", "iac", "review"]
     },
@@ -16,6 +20,7 @@
       "name": "aws",
       "source": "./plugins/aws",
       "description": "AWS 向けユーティリティ集。現在は cost-estimate スキルを同梱。",
+      "version": "0.1.0",
       "category": "cloud",
       "tags": ["aws", "cost", "pricing"]
     }
