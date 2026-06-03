@@ -20,7 +20,7 @@
       "name": "aws",
       "source": "./plugins/aws",
       "description": "AWS 向けユーティリティ集。現在は cost-estimate スキルを同梱。",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "cloud",
       "tags": ["aws", "cost", "pricing"]
     }
