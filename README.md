@@ -1,6 +1,6 @@
 # agent-plugins
 
-Hirokazu Funaki 個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じスキルを利用できます。スキル本体（`SKILL.md`）は両エージェントで共有し、エージェントごとのカタログ／マニフェストだけを別々に持ちます（[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) の方式に準拠）。
+個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じスキルを利用できます。スキル本体（`SKILL.md`）は両エージェントで共有し、エージェントごとのカタログ／マニフェストだけを別々に持ちます（[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) の方式に準拠）。
 
 エージェントがこのリポジトリで作業するための設計メモは [`AGENTS.md`](./AGENTS.md)（= `CLAUDE.md`）にあります。本書はインストール・利用・プラグイン追加の**手順書**です。
 
