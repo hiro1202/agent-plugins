@@ -1,7 +1,7 @@
 {
   "name": "terraform",
   "version": "0.1.0",
-  "description": "Hirokazu Funaki 個人用の Terraform ヘルパー。まずは code-review スキルから。",
+  "description": "個人用の Terraform ヘルパー。まずは code-review スキルから。",
   "author": {
     "name": "Hirokazu Funaki"
   },
