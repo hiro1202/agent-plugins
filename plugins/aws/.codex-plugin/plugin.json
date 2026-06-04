@@ -10,10 +10,11 @@
   "license": "MIT",
   "keywords": ["aws", "cost", "pricing", "estimate"],
   "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "AWS ツールボックス",
     "shortDescription": "説明文や IaC ファイルから月額 AWS コストを見積もる。",
-    "longDescription": "アーキテクチャの説明文や Terraform / CloudFormation ファイルから、前提を明示したうえで月額の AWS コスト見積もりを内訳付きで作成するヘルパー。",
+    "longDescription": "アーキテクチャの説明文や Terraform / CloudFormation ファイルから、前提を明示したうえで月額の AWS コスト見積もりを内訳付きで作成するヘルパー。AWS Knowledge MCP（リモート）で最新の公開料金を参照して単価を裏付ける。",
     "defaultPrompt": [
       "この構成だと AWS で月いくらかかる？",
       "この Terraform のコストを見積もって。",
