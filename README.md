@@ -10,6 +10,7 @@
 | --- | --- | --- |
 | `terraform` | `code-review` | Terraform コード（.tf / .tfvars）をセキュリティ / ベストプラクティス / 運用観点でレビューする。 |
 | `aws` | `cost-estimate` | 説明文や IaC ファイルから月額 AWS コストを見積もる。 |
+| `git` | `commit-and-pr` | 変更をコミットし、プルリクエストを作成する（Conventional Commits 準拠・安全なガードレール付き）。 |
 
 ## ディレクトリ構成
 
@@ -25,10 +26,14 @@ agent-plugins/
     │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
     │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
     │   └── skills/code-review/SKILL.md
-    └── aws/
+    ├── aws/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── .codex-plugin/plugin.json
+    │   └── skills/cost-estimate/SKILL.md
+    └── git/
         ├── .claude-plugin/plugin.json
         ├── .codex-plugin/plugin.json
-        └── skills/cost-estimate/SKILL.md
+        └── skills/commit-and-pr/SKILL.md
 ```
 
 ---
