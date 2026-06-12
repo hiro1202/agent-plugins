@@ -1,6 +1,6 @@
 # agent-plugins
 
-個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じスキルを利用できます。スキル本体（`SKILL.md`）は両エージェントで共有し、エージェントごとのカタログ／マニフェストだけを別々に持ちます（[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) の方式に準拠）。
+個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じスキルを利用できます。スキル本体（`SKILL.md`）は両エージェントで共有し、エージェントごとのカタログ／マニフェストだけを別々に持ちます。Codex 側は OpenAI 公式の [Build plugins](https://developers.openai.com/codex/plugins/build)・[Agent Skills](https://developers.openai.com/codex/skills) に、Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に準拠します。
 
 エージェントがこのリポジトリで作業するための設計メモは [`AGENTS.md`](./AGENTS.md)（= `CLAUDE.md`）にあります。本書はインストール・利用・プラグイン追加の**手順書**です。
 
@@ -106,7 +106,7 @@ codex plugin marketplace add /path/to/agent-plugins
 
 ## 手順 3: 新しいプラグイン／スキルを追加する
 
-1. **スキルを作る** — `plugins/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。
+1. **スキルを作る** — `plugins/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。あわせて `agents/openai.yaml`（Codex での表示名・自動起動可否の設定。任意だが推奨）を置く。
 2. **マニフェストを作る** — `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json`。`name` と `version` は 2 ファイルで一致させる。
 3. **カタログに登録する** — `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にエントリを追加する。
 4. **バリデーションする** — 下記「手順 5」。
@@ -133,7 +133,11 @@ codex plugin marketplace add /path/to/agent-plugins
 # Claude Code 用マニフェスト
 claude plugin validate ./plugins/terraform --strict
 claude plugin validate ./plugins/aws --strict
+claude plugin validate ./plugins/git --strict
 
-# Codex 用カタログ（読み込めることを確認。実環境を汚さないよう一時 CODEX_HOME で実行）
-CODEX_HOME="$(mktemp -d)" codex plugin marketplace add "$(pwd)"
+# Codex 用カタログ（読み込めることを確認）
+# 注意: CODEX_HOME での隔離は効かず、実環境の ~/.codex/config.toml に登録される（codex 0.130 で確認）。
+# ローカル登録は作業ディレクトリを直接参照するため、変更後の再登録は不要（upgrade は Git ソース専用）。
+codex plugin marketplace add "$(pwd)"          # 初回のみ
+codex plugin marketplace remove agent-plugins  # 後始末（任意）
 ```

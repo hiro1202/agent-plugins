@@ -18,7 +18,7 @@
 
 ### 設計上の要点：スキル本体は両エージェントで共有
 
-`plugins/<name>/skills/.../SKILL.md` が唯一の正本です。Claude Code と Codex で内容を複製しません。エージェントごとに分けるのは**カタログとマニフェストだけ**です（[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) の方式に準拠）。
+`plugins/<name>/skills/.../SKILL.md` が唯一の正本です。Claude Code と Codex で内容を複製しません。エージェントごとに分けるのは**カタログとマニフェストだけ**です。Codex 側の規約は OpenAI 公式ドキュメント（[Build plugins](https://developers.openai.com/codex/plugins/build)、[Agent Skills](https://developers.openai.com/codex/skills)）に、Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に準拠します。
 
 ## ディレクトリ構成
 
@@ -35,15 +35,21 @@ agent-plugins/
     ├── terraform/
     │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
     │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
-    │   └── skills/code-review/SKILL.md
+    │   └── skills/code-review/
+    │       ├── SKILL.md                 # スキル本体（両エージェント共有）
+    │       └── agents/openai.yaml       # Codex 用スキル表示設定（任意）
     ├── aws/
     │   ├── .claude-plugin/plugin.json
     │   ├── .codex-plugin/plugin.json
-    │   └── skills/cost-estimate/SKILL.md
+    │   └── skills/cost-estimate/
+    │       ├── SKILL.md
+    │       └── agents/openai.yaml
     └── git/
         ├── .claude-plugin/plugin.json
         ├── .codex-plugin/plugin.json
-        └── skills/commit-and-pr/SKILL.md
+        └── skills/commit-and-pr/
+            ├── SKILL.md
+            └── agents/openai.yaml
 ```
 
 ## 共通化の方針（何を共有し、何を分けるか）
@@ -52,12 +58,12 @@ Claude Code と Codex で内容が同じになるものは 1 ソースに寄せ�
 
 | 対象 | 方式 | 理由 |
 | --- | --- | --- |
-| エージェント指示書（`AGENTS.md` / `CLAUDE.md`） | **シンボリックリンクで共有**（`CLAUDE.md` → `AGENTS.md`） | 同じ Markdown。Codex は `AGENTS.md`、Claude Code は `CLAUDE.md` を読むだけで中身は同一。[awslabs/agent-plugins](https://github.com/awslabs/agent-plugins) でも唯一の symlink。 |
+| エージェント指示書（`AGENTS.md` / `CLAUDE.md`） | **シンボリックリンクで共有**（`CLAUDE.md` → `AGENTS.md`） | 同じ Markdown。Codex は `AGENTS.md`、Claude Code は `CLAUDE.md` を読むだけで中身は同一。 |
 | スキル本体（`SKILL.md`、`references/`） | **単一ソースで共有**（両マニフェストが `./skills/` を参照） | 形式が共通。複製しない。 |
 | マーケットプレースカタログ | **エージェントごとに別ファイル** | スキーマが異なる（Claude=`source` 文字列＋`keywords`/`tags`、Codex=`source` オブジェクト＋`policy`）。symlink 不可。 |
 | プラグインマニフェスト（`plugin.json`） | **エージェントごとに別ファイル** | Codex 側に `interface` / `skills` / `mcpServers` が増える。共通フィールド（`name`/`version` 等）は手で揃える。 |
 
-> 結論: symlink で共通化できる指示書は `AGENTS.md` / `CLAUDE.md` の 1 組のみ。カタログとマニフェストはスキーマ差のため別管理が正しい（参考リポも同様）。新しい指示書フォーマットを読む別エージェントを足す場合は、同様に `AGENTS.md` へのシンボリックリンクを増やす。
+> 結論: symlink で共通化できる指示書は `AGENTS.md` / `CLAUDE.md` の 1 組のみ。カタログとマニフェストはスキーマ差のため別管理が正しい。新しい指示書フォーマットを読む別エージェントを足す場合は、同様に `AGENTS.md` へのシンボリックリンクを増やす。なお Codex は `.claude-plugin/marketplace.json` もレガシー互換として読めるが、`.agents/plugins/marketplace.json` が正式な置き場所（[公式: Build plugins](https://developers.openai.com/codex/plugins/build)）。
 
 ## 同梱プラグイン
 
@@ -69,7 +75,7 @@ Claude Code と Codex で内容が同じになるものは 1 ソースに寄せ�
 
 ## 新しいプラグイン／スキルを追加するときの手順
 
-1. `plugins/<name>/skills/<skill>/SKILL.md` を作る。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く。
+1. `plugins/<name>/skills/<skill>/SKILL.md` を作る。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く。あわせて `agents/openai.yaml`（Codex での表示名・自動起動可否の設定。任意だが推奨）を置く。
 2. `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json` を作る。`name` と `version` は 2 ファイルで一致させる。
 3. `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にプラグインのエントリを追加する。
 4. バリデーションを実行する（下記）。
@@ -81,8 +87,11 @@ Claude Code と Codex で内容が同じになるものは 1 ソースに寄せ�
 # Claude Code 用マニフェスト
 claude plugin validate ./plugins/<name> --strict
 
-# Codex 用カタログ（読み込めることを確認。隔離環境で実行）
-CODEX_HOME="$(mktemp -d)" codex plugin marketplace add "$(pwd)"
+# Codex 用カタログ（読み込めることを確認）
+# 注意: CODEX_HOME での隔離は効かず、実環境の ~/.codex/config.toml に登録される（codex 0.130 で確認）。
+# ローカル登録は作業ディレクトリを直接参照するため、変更後の再登録は不要（upgrade は Git ソース専用）。
+codex plugin marketplace add "$(pwd)"          # 初回のみ
+codex plugin marketplace remove agent-plugins  # 後始末（任意）
 
 # JSON の妥当性
 python3 -m json.tool <file.json> >/dev/null
