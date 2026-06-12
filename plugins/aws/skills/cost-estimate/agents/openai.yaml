@@ -1,0 +1,6 @@
+interface:
+  display_name: "AWS コスト見積もり"
+  short_description: "説明文や Terraform / CloudFormation ファイルから月額の AWS コストを見積もる。"
+
+policy:
+  allow_implicit_invocation: true
