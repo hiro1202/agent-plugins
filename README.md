@@ -106,7 +106,7 @@ codex plugin marketplace add /path/to/agent-plugins
 
 ## 手順 3: 新しいプラグイン／スキルを追加する
 
-1. **スキルを作る** — `plugins/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。あわせて `agents/openai.yaml`（Codex での表示名・自動起動可否の設定。任意だが推奨）を置く。
+1. **スキルを作る** — `plugins/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。
 2. **マニフェストを作る** — `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json`。`name` と `version` は 2 ファイルで一致させる。
 3. **カタログに登録する** — `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にエントリを追加する。
 4. **バリデーションする** — 下記「手順 5」。
