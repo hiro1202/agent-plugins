@@ -5,24 +5,18 @@
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "homepage": "https://github.com/hiro1202/agent-plugins",
   "repository": "https://github.com/hiro1202/agent-plugins",
   "license": "MIT",
-  "keywords": ["terraform", "iac", "review"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Terraform ツールボックス",
     "shortDescription": "Terraform コードをセキュリティ・ベストプラクティス・運用観点でレビューする。",
-    "longDescription": "Terraform コード（.tf / .tfvars）をセキュリティ、信頼性・運用、State / モジュール衛生、スタイルの観点でレビューし、file:line 付きで指摘する読み取り専用ヘルパー。",
+    "developerName": "Hirokazu Funaki",
+    "category": "Infrastructure",
     "defaultPrompt": [
       "この Terraform 差分をレビューして。",
       "このモジュールのセキュリティを確認して。",
       "main からの .tf 差分をレビューして。"
-    ],
-    "developerName": "Hirokazu Funaki",
-    "category": "Infrastructure",
-    "capabilities": ["Read"],
-    "websiteURL": "https://github.com/hiro1202/agent-plugins",
-    "brandColor": "#7B42BC"
+    ]
   }
 }
