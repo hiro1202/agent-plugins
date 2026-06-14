@@ -1,6 +1,0 @@
-interface:
-  display_name: "Terraform コードレビュー"
-  short_description: "Terraform コード（.tf / .tfvars）をセキュリティ・ベストプラクティス・運用観点でレビューする。"
-
-policy:
-  allow_implicit_invocation: true

@@ -1,6 +1,0 @@
-interface:
-  display_name: "コミット & PR 作成"
-  short_description: "変更を Conventional Commits 準拠でコミットし、プルリクエストを作成する。"
-
-policy:
-  allow_implicit_invocation: true

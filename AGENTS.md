@@ -35,21 +35,15 @@ agent-plugins/
     ├── terraform/
     │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
     │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
-    │   └── skills/code-review/
-    │       ├── SKILL.md                 # スキル本体（両エージェント共有）
-    │       └── agents/openai.yaml       # Codex 用スキル表示設定（任意）
+    │   └── skills/code-review/SKILL.md
     ├── aws/
     │   ├── .claude-plugin/plugin.json
     │   ├── .codex-plugin/plugin.json
-    │   └── skills/cost-estimate/
-    │       ├── SKILL.md
-    │       └── agents/openai.yaml
+    │   └── skills/cost-estimate/SKILL.md
     └── git/
         ├── .claude-plugin/plugin.json
         ├── .codex-plugin/plugin.json
-        └── skills/commit-and-pr/
-            ├── SKILL.md
-            └── agents/openai.yaml
+        └── skills/commit-and-pr/SKILL.md
 ```
 
 ## 共通化の方針（何を共有し、何を分けるか）
@@ -75,7 +69,7 @@ Claude Code と Codex で内容が同じになるものは 1 ソースに寄せ�
 
 ## 新しいプラグイン／スキルを追加するときの手順
 
-1. `plugins/<name>/skills/<skill>/SKILL.md` を作る。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く。あわせて `agents/openai.yaml`（Codex での表示名・自動起動可否の設定。任意だが推奨）を置く。
+1. `plugins/<name>/skills/<skill>/SKILL.md` を作る。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く。
 2. `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json` を作る。`name` と `version` は 2 ファイルで一致させる。
 3. `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にプラグインのエントリを追加する。
 4. バリデーションを実行する（下記）。
