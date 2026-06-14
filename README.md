@@ -79,26 +79,48 @@ agent-plugins/
 
 Codex はリポジトリローカルのマーケットプレース（`.agents/plugins/marketplace.json`）と各プラグインのマニフェスト（`plugins/*/.codex-plugin/plugin.json`）を読み取ります（[公式: Build plugins](https://developers.openai.com/codex/plugins/build) に準拠）。
 
-### 2-1. リポジトリを取得する
+### 2-1. マーケットプレースを追加する
 
 ```sh
-git clone https://github.com/hiro1202/agent-plugins.git
+# ローカルのクローンから（リポジトリのルートを指定）
+codex plugin marketplace add /Users/funakihirokazu/Develop/hiro1202/agent-plugins
+
+# または GitHub から直接
+codex plugin marketplace add hiro1202/agent-plugins
 ```
 
-### 2-2. マーケットプレースを追加する
+追加済みの確認は `codex plugin marketplace list`、削除は `codex plugin marketplace remove agent-plugins`。
 
-```sh
-# リポジトリのルートを指定する
-codex plugin marketplace add /path/to/agent-plugins
+### 2-2. プラグインをインストールする
+
+Codex に `install` サブコマンドはありません。対話 TUI のプラグインブラウザから入れます。
+
+1. `codex` を起動し、`/plugins` と打ってプラグインブラウザを開く。
+2. タブを切り替えて `agent-plugins` マーケットプレースを選ぶ。
+3. 入れたいプラグイン（`terraform` / `aws` / `git`）を選んでインストールする。
+
+`✓ Installed ...` と出れば完了です。`codex plugin list` で `installed, enabled` を確認できます。
+
+### 2-3. 使う
+
+> **重要:** インストール直後の**同じセッションにはスキルが読み込まれません**。一度 Codex を完全に終了し、`codex` を起動し直してください（スキルはセッション開始時に読み込まれます）。
+
+新しいセッションなら、Claude Code と同じく自然言語で自動起動します。
+
+```
+「この Terraform の差分をレビューして」
+「この構成だと AWS で月いくらかかる？」
 ```
 
-### 2-3. インストールして使う
+明示的に呼び出すときは `$プラグイン名:スキル名` の形式です（Claude Code の `/プラグイン名:スキル名` に対応）。
 
-1. Codex でこのリポジトリを開く（`.agents/plugins/marketplace.json` が検出される）。
-2. Codex を再起動する。
-3. プラグインディレクトリで `agent-plugins` マーケットプレースを選び、使いたいプラグインをインストールする。
+```
+$terraform:code-review
+$aws:cost-estimate
+$git:commit-and-pr
+```
 
-インストール後は Claude Code と同じスキルが自動起動します。
+`$` を打つとスキル名の補完候補が出ます。`/skills` でもインストール済みスキルの一覧から選べます。
 
 > 既知の制限: Claude Code 固有の自動フック（`hooks/`）は Codex マニフェストには接続していません。本リポジトリのプラグインは読み取り専用スキルのみのため、現状フックは含みません。
 
