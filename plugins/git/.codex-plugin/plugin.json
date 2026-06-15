@@ -1,28 +1,22 @@
 {
   "name": "git",
   "version": "0.1.0",
-  "description": "Hirokazu Funaki 個人用の Git ワークフローヘルパー。まずは commit-and-pr スキルから。",
+  "description": "個人用の Git ワークフローヘルパー。変更の確認、コミット、プルリクエスト作成を支援する。",
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "homepage": "https://github.com/hiro1202/agent-plugins",
   "repository": "https://github.com/hiro1202/agent-plugins",
   "license": "MIT",
-  "keywords": ["git", "github", "commit", "pull-request", "workflow"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Git ツールボックス",
     "shortDescription": "変更をコミットしてプルリクエストを作成する。",
-    "longDescription": "作業ツリーの変更を Conventional Commits 準拠でコミットし、リポジトリの慣習に沿ったプルリクエストを安全なガードレール付きで作成するワークフローヘルパー。デフォルトブランチへの直接コミットを避け、秘密情報の混入を警告する。定型タスクのためトークン節約には軽量モデル（Claude Code: Haiku 4.5、Codex: gpt-5 系の低 reasoning effort）の利用を推奨。",
+    "developerName": "Hirokazu Funaki",
+    "category": "Developer Tools",
     "defaultPrompt": [
       "変更をコミットして PR を作って。",
       "これで上げて。",
       "今の差分をコミットしてプルリク作成して。"
-    ],
-    "developerName": "Hirokazu Funaki",
-    "category": "Developer Tools",
-    "capabilities": ["Bash"],
-    "websiteURL": "https://github.com/hiro1202/agent-plugins",
-    "brandColor": "#F05032"
+    ]
   }
 }

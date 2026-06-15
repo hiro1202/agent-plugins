@@ -7,6 +7,5 @@
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "license": "MIT",
-  "keywords": ["git", "github", "commit", "pull-request", "workflow"]
+  "license": "MIT"
 }

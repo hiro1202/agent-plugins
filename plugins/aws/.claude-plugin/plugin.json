@@ -7,6 +7,5 @@
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "license": "MIT",
-  "keywords": ["aws", "cost", "pricing", "estimate"]
+  "license": "MIT"
 }

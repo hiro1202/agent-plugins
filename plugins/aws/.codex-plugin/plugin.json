@@ -5,25 +5,19 @@
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "homepage": "https://github.com/hiro1202/agent-plugins",
   "repository": "https://github.com/hiro1202/agent-plugins",
   "license": "MIT",
-  "keywords": ["aws", "cost", "pricing", "estimate"],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "AWS ツールボックス",
     "shortDescription": "説明文や IaC ファイルから月額 AWS コストを見積もる。",
-    "longDescription": "アーキテクチャの説明文や Terraform / CloudFormation ファイルから、前提を明示したうえで月額の AWS コスト見積もりを内訳付きで作成するヘルパー。AWS Knowledge MCP（リモート）で最新の公開料金を参照して単価を裏付ける。",
+    "developerName": "Hirokazu Funaki",
+    "category": "Cloud",
     "defaultPrompt": [
       "この構成だと AWS で月いくらかかる？",
       "この Terraform のコストを見積もって。",
       "ap-northeast-1 のこの構成の料金内訳を出して。"
-    ],
-    "developerName": "Hirokazu Funaki",
-    "category": "Cloud",
-    "capabilities": ["Read"],
-    "websiteURL": "https://github.com/hiro1202/agent-plugins",
-    "brandColor": "#FF9900"
+    ]
   }
 }

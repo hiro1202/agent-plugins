@@ -7,6 +7,5 @@
   "author": {
     "name": "Hirokazu Funaki"
   },
-  "license": "MIT",
-  "keywords": ["terraform", "iac", "review"]
+  "license": "MIT"
 }
