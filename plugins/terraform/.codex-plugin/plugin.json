@@ -8,6 +8,7 @@
   "repository": "https://github.com/hiro1202/agent-plugins",
   "license": "MIT",
   "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Terraform ツールボックス",
     "shortDescription": "Terraform コードをセキュリティ・ベストプラクティス・運用観点でレビューする。",
