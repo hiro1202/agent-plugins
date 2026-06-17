@@ -8,7 +8,7 @@
       "name": "terraform",
       "source": {
         "source": "local",
-        "path": "./plugins/terraform"
+        "path": "./plugins/codex/terraform"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -20,7 +20,7 @@
       "name": "aws",
       "source": {
         "source": "local",
-        "path": "./plugins/aws"
+        "path": "./plugins/codex/aws"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -32,7 +32,7 @@
       "name": "git",
       "source": {
         "source": "local",
-        "path": "./plugins/git"
+        "path": "./plugins/codex/git"
       },
       "policy": {
         "installation": "AVAILABLE",

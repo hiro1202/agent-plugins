@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "terraform",
-      "source": "./plugins/terraform",
+      "source": "./plugins/claude/terraform",
       "description": "Terraform 向けユーティリティ集。現在は code-review スキルを同梱。",
       "version": "0.1.0",
       "category": "iac",
@@ -18,7 +18,7 @@
     },
     {
       "name": "aws",
-      "source": "./plugins/aws",
+      "source": "./plugins/claude/aws",
       "description": "AWS 向けユーティリティ集。現在は cost-estimate スキルを同梱。",
       "version": "0.1.0",
       "category": "cloud",
@@ -26,7 +26,7 @@
     },
     {
       "name": "git",
-      "source": "./plugins/git",
+      "source": "./plugins/claude/git",
       "description": "Git ワークフローヘルパー。現在は commit-and-pr スキルを同梱。",
       "version": "0.1.0",
       "category": "developer-tools",
