@@ -1,6 +1,6 @@
 # agent-plugins
 
-個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じスキルを利用できます。スキル本体（`SKILL.md`）は両エージェントで共有し、エージェントごとのカタログ／マニフェストだけを別々に持ちます。Codex 側は OpenAI 公式の [Build plugins](https://developers.openai.com/codex/plugins/build)・[Agent Skills](https://developers.openai.com/codex/skills) に、Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に準拠します。
+個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じプラグインを利用できます。プラグイン本体は `plugins/claude/` と `plugins/codex/` にエージェントごと分けて置き、同じ並びで 1:1 対応させます（方向性が合う範囲で同期）。Codex 側は OpenAI 公式の [Build plugins](https://developers.openai.com/codex/plugins/build)・[Agent Skills](https://developers.openai.com/codex/skills) に、Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に準拠します。
 
 エージェントがこのリポジトリで作業するための設計メモは [`AGENTS.md`](./AGENTS.md)（= `CLAUDE.md`）にあります。本書はインストール・利用・プラグイン追加の**手順書**です。
 
@@ -21,19 +21,21 @@ agent-plugins/
 │   └── marketplace.json          # Claude Code 用カタログ
 ├── .agents/
 │   └── plugins/marketplace.json  # Codex 用カタログ
-└── plugins/                      # プラグイン本体（スキルは両エージェントで共有）
-    ├── terraform/
-    │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
-    │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
-    │   └── skills/code-review/SKILL.md
-    ├── aws/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── .codex-plugin/plugin.json
-    │   └── skills/cost-estimate/SKILL.md
-    └── git/
-        ├── .claude-plugin/plugin.json
-        ├── .codex-plugin/plugin.json
-        └── skills/commit-and-pr/SKILL.md
+└── plugins/                      # プラグイン本体（エージェントごとに分割）
+    ├── claude/                   # Claude Code 用ツリー
+    │   ├── terraform/
+    │   │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
+    │   │   ├── .mcp.json                    # MCP サーバー定義（自動検出）
+    │   │   └── skills/code-review/SKILL.md
+    │   ├── aws/    （.claude-plugin/plugin.json, .mcp.json, skills/cost-estimate/SKILL.md）
+    │   └── git/    （.claude-plugin/plugin.json, skills/commit-and-pr/SKILL.md）
+    └── codex/                    # Codex 用ツリー（claude/ と同じ並びで対応）
+        ├── terraform/
+        │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
+        │   ├── .mcp.json
+        │   └── skills/code-review/SKILL.md
+        ├── aws/    （.codex-plugin/plugin.json, .mcp.json, skills/cost-estimate/SKILL.md）
+        └── git/    （.codex-plugin/plugin.json, skills/commit-and-pr/SKILL.md）
 ```
 
 ---
@@ -77,7 +79,7 @@ agent-plugins/
 
 ## 手順 2: Codex で使う
 
-Codex はリポジトリローカルのマーケットプレース（`.agents/plugins/marketplace.json`）と各プラグインのマニフェスト（`plugins/*/.codex-plugin/plugin.json`）を読み取ります（[公式: Build plugins](https://developers.openai.com/codex/plugins/build) に準拠）。
+Codex はリポジトリローカルのマーケットプレース（`.agents/plugins/marketplace.json`）と各プラグインのマニフェスト（`plugins/codex/*/.codex-plugin/plugin.json`）を読み取ります（[公式: Build plugins](https://developers.openai.com/codex/plugins/build) に準拠）。
 
 ### 2-1. マーケットプレースを追加する
 
@@ -128,18 +130,19 @@ $git:commit-and-pr
 
 ## 手順 3: 新しいプラグイン／スキルを追加する
 
-1. **スキルを作る** — `plugins/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。
-2. **マニフェストを作る** — `plugins/<name>/.claude-plugin/plugin.json` と `plugins/<name>/.codex-plugin/plugin.json`。`name` と `version` は 2 ファイルで一致させる。
-3. **カタログに登録する** — `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方にエントリを追加する。
-4. **バリデーションする** — 下記「手順 5」。
-5. **README を更新する** — 上の「同梱プラグイン」表に追記する。
+1. **スキルを作る** — `plugins/claude/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。MCP を使うなら `plugins/claude/<name>/.mcp.json` も置く。
+2. **マニフェストを作る** — `plugins/claude/<name>/.claude-plugin/plugin.json`。
+3. **もう片方のツリーへ展開する** — `plugins/codex/<name>/` に `.codex-plugin/plugin.json`（`name` / `version` は claude 側と一致）と `skills/` ・ `.mcp.json` を、方向性が合う範囲で用意する。ツール名・起動構文などエージェント固有の差分はここで吸収する。
+4. **カタログに登録する** — `.claude-plugin/marketplace.json`（`./plugins/claude/<name>` を指す）と `.agents/plugins/marketplace.json`（`./plugins/codex/<name>` を指す）の両方にエントリを追加する。
+5. **バリデーションする** — 下記「手順 5」。
+6. **README を更新する** — 上の「同梱プラグイン」表に追記する。
 
 ---
 
 ## 手順 4: プラグインを更新・再配布する
 
-1. `plugins/<name>/` 配下のファイル（共有スキルなど）を編集する。
-2. `.claude-plugin/plugin.json` と `.codex-plugin/plugin.json` の `version` を SemVer（MAJOR.MINOR.PATCH）で**揃えて**上げる。
+1. `plugins/claude/<name>/`（および対応する `plugins/codex/<name>/`）配下のファイルを編集する。
+2. `plugins/claude/<name>/.claude-plugin/plugin.json` と `plugins/codex/<name>/.codex-plugin/plugin.json` の `version` を SemVer（MAJOR.MINOR.PATCH）で**揃えて**上げる。
 3. コミットして push する。
 4. 取得側の操作:
    - Claude Code: `/plugin marketplace update` のあと `/plugin update <name>@agent-plugins`。
@@ -153,9 +156,9 @@ $git:commit-and-pr
 
 ```sh
 # Claude Code 用マニフェスト
-claude plugin validate ./plugins/terraform --strict
-claude plugin validate ./plugins/aws --strict
-claude plugin validate ./plugins/git --strict
+claude plugin validate ./plugins/claude/terraform --strict
+claude plugin validate ./plugins/claude/aws --strict
+claude plugin validate ./plugins/claude/git --strict
 
 # Codex 用カタログ（読み込めることを確認）
 # 注意: CODEX_HOME での隔離は効かず、実環境の ~/.codex/config.toml に登録される（codex 0.130 で確認）。
