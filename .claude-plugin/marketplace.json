@@ -1,7 +1,7 @@
 {
   "name": "agent-plugins",
   "metadata": {
-    "description": "個人用の Claude Code プラグイン集（Terraform、AWS）。",
+    "description": "個人用の Claude Code プラグイン集。",
     "version": "0.1.0"
   },
   "owner": {
