@@ -1,11 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "git",
-  "displayName": "Git ツールボックス",
   "version": "0.1.0",
-  "description": "Hirokazu Funaki 個人用の Git ワークフローヘルパー。まずは commit-and-pr スキルから。",
-  "author": {
-    "name": "Hirokazu Funaki"
-  },
-  "license": "MIT"
+  "description": "個人用の Git ワークフローヘルパー。まずは commit-and-pr スキルから。",
+  "author": { "name": "Hirokazu Funaki" }
 }

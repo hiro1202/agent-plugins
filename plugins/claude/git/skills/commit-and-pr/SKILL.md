@@ -7,15 +7,6 @@ description: 作業ツリーの変更をコミットし、プルリクエスト�
 
 作業ツリーの変更を、安全なガードレールを守りながらコミットし、プルリクエスト（PR）を作成します。`git` と `gh`（GitHub CLI）を使う、Claude Code と Codex の両方で動く手順書です。
 
-## 推奨モデル（トークン節約）
-
-このスキルの作業は「diff を読む → Conventional Commits メッセージと PR 本文に要約する → git/gh を実行する」が中心で、深い推論を要しません。トークンを節約したいなら、軽量モデルに切り替えてから実行してください。
-
-- **Claude Code**: Haiku 4.5（`claude-haiku-4-5`）で十分。差分が巨大・曖昧でメッセージ要約の質が落ちるときだけ Sonnet 4.6 に上げる。Opus は過剰。
-- **Codex (OpenAI)**: gpt-5 系を **低 reasoning effort**（`model_reasoning_effort=low` か `minimal`、または mini クラス）で。Codex の主なコストは reasoning トークンなので、effort を下げるのが最大の節約になる。
-
-モデル選択は実行前にユーザー側で行う前提です（このスキル自体はモデルを切り替えません）。
-
 ## ワークフロー
 
 ### 1. 前提を確認する

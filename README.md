@@ -1,6 +1,6 @@
 # agent-plugins
 
-個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code** と **OpenAI Codex** の両方で同じプラグインを利用できます。プラグイン本体は `plugins/claude/` と `plugins/codex/` にエージェントごと分けて置き、同じ並びで 1:1 対応させます（方向性が合う範囲で同期）。Codex 側は OpenAI 公式の [Build plugins](https://developers.openai.com/codex/plugins/build)・[Agent Skills](https://developers.openai.com/codex/skills) に、Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に準拠します。
+個人用の、AI コーディングエージェント向けプラグイン集。**Claude Code 用（`plugins/claude/`）を正本**として開発し、**OpenAI Codex 用（`plugins/codex/`）は必要になったときに Codex に claude 側を参照させて生成**します。Claude Code 側は [Claude Code 公式のプラグイン仕様](https://docs.claude.com/en/docs/claude-code/plugins)に、Codex 側は OpenAI 公式の [Build plugins](https://developers.openai.com/codex/plugins/build)・[Agent Skills](https://developers.openai.com/codex/skills) に準拠します。
 
 エージェントがこのリポジトリで作業するための設計メモは [`AGENTS.md`](./AGENTS.md)（= `CLAUDE.md`）にあります。本書はインストール・利用・プラグイン追加の**手順書**です。
 
@@ -18,24 +18,21 @@
 agent-plugins/
 ├── AGENTS.md / CLAUDE.md         # エージェント向けコンテキスト（CLAUDE.md は AGENTS.md へのシンボリックリンク）
 ├── .claude-plugin/
-│   └── marketplace.json          # Claude Code 用カタログ
+│   └── marketplace.json          # Claude Code 用カタログ（常に全プラグインを掲載）
 ├── .agents/
-│   └── plugins/marketplace.json  # Codex 用カタログ
-└── plugins/                      # プラグイン本体（エージェントごとに分割）
-    ├── claude/                   # Claude Code 用ツリー
+│   └── plugins/marketplace.json  # Codex 用カタログ（生成済みプラグインのみ掲載）
+└── plugins/
+    ├── claude/                   # 正本（Claude Code 用）
     │   ├── terraform/
     │   │   ├── .claude-plugin/plugin.json   # Claude Code 用マニフェスト
     │   │   ├── .mcp.json                    # MCP サーバー定義（自動検出）
     │   │   └── skills/code-review/SKILL.md
     │   ├── aws/    （.claude-plugin/plugin.json, .mcp.json, skills/cost-estimate/SKILL.md）
     │   └── git/    （.claude-plugin/plugin.json, skills/commit-and-pr/SKILL.md）
-    └── codex/                    # Codex 用ツリー（claude/ と同じ並びで対応）
-        ├── terraform/
-        │   ├── .codex-plugin/plugin.json    # Codex 用マニフェスト
-        │   ├── .mcp.json
-        │   └── skills/code-review/SKILL.md
-        ├── aws/    （.codex-plugin/plugin.json, .mcp.json, skills/cost-estimate/SKILL.md）
-        └── git/    （.codex-plugin/plugin.json, skills/commit-and-pr/SKILL.md）
+    └── codex/                    # 生成物（Codex 用。claude 側から必要時に生成）
+        ├── terraform/  （.codex-plugin/plugin.json, .mcp.json, skills/code-review/SKILL.md）
+        ├── aws/        （.codex-plugin/plugin.json, .mcp.json, skills/cost-estimate/SKILL.md）
+        └── git/        （.codex-plugin/plugin.json, skills/commit-and-pr/SKILL.md）
 ```
 
 ---
@@ -46,7 +43,7 @@ agent-plugins/
 
 ```sh
 # ローカルのクローンから
-/plugin marketplace add /Users/funakihirokazu/Develop/hiro1202/agent-plugins
+/plugin marketplace add <リポジトリをクローンしたパス>
 
 # または GitHub から直接
 /plugin marketplace add hiro1202/agent-plugins
@@ -79,13 +76,13 @@ agent-plugins/
 
 ## 手順 2: Codex で使う
 
-Codex はリポジトリローカルのマーケットプレース（`.agents/plugins/marketplace.json`）と各プラグインのマニフェスト（`plugins/codex/*/.codex-plugin/plugin.json`）を読み取ります（[公式: Build plugins](https://developers.openai.com/codex/plugins/build) に準拠）。
+`plugins/codex/` は claude 側から生成した成果物で、生成済みのプラグインだけがインストールできます（claude 側より古いことがあります。最新化は「手順 3」の生成手順で）。
 
 ### 2-1. マーケットプレースを追加する
 
 ```sh
 # ローカルのクローンから（リポジトリのルートを指定）
-codex plugin marketplace add /Users/funakihirokazu/Develop/hiro1202/agent-plugins
+codex plugin marketplace add <リポジトリをクローンしたパス>
 
 # または GitHub から直接
 codex plugin marketplace add hiro1202/agent-plugins
@@ -107,14 +104,7 @@ Codex に `install` サブコマンドはありません。対話 TUI のプラ�
 
 > **重要:** インストール直後の**同じセッションにはスキルが読み込まれません**。一度 Codex を完全に終了し、`codex` を起動し直してください（スキルはセッション開始時に読み込まれます）。
 
-新しいセッションなら、Claude Code と同じく自然言語で自動起動します。
-
-```
-「この Terraform の差分をレビューして」
-「この構成だと AWS で月いくらかかる？」
-```
-
-明示的に呼び出すときは `$プラグイン名:スキル名` の形式です（Claude Code の `/プラグイン名:スキル名` に対応）。
+新しいセッションなら、Claude Code と同じく自然言語で自動起動します。明示的に呼び出すときは `$プラグイン名:スキル名` の形式です（Claude Code の `/プラグイン名:スキル名` に対応）。
 
 ```
 $terraform:code-review
@@ -124,25 +114,30 @@ $git:commit-and-pr
 
 `$` を打つとスキル名の補完候補が出ます。`/skills` でもインストール済みスキルの一覧から選べます。
 
-> 既知の制限: Claude Code 固有の自動フック（`hooks/`）は Codex マニフェストには接続していません。本リポジトリのプラグインは読み取り専用スキルのみのため、現状フックは含みません。
-
 ---
 
 ## 手順 3: 新しいプラグイン／スキルを追加する
 
+claude 側だけに作ります。Codex 版は毎回は作らず、必要になったときに生成します。
+
 1. **スキルを作る** — `plugins/claude/<name>/skills/<skill>/SKILL.md`。フロントマターに `name` と「いつ使うか」が伝わる `description` を必ず書く（`description` が自動起動の判定材料になる）。MCP を使うなら `plugins/claude/<name>/.mcp.json` も置く。
 2. **マニフェストを作る** — `plugins/claude/<name>/.claude-plugin/plugin.json`。
-3. **もう片方のツリーへ展開する** — `plugins/codex/<name>/` に `.codex-plugin/plugin.json`（`name` / `version` は claude 側と一致）と `skills/` ・ `.mcp.json` を、方向性が合う範囲で用意する。ツール名・起動構文などエージェント固有の差分はここで吸収する。
-4. **カタログに登録する** — `.claude-plugin/marketplace.json`（`./plugins/claude/<name>` を指す）と `.agents/plugins/marketplace.json`（`./plugins/codex/<name>` を指す）の両方にエントリを追加する。
-5. **バリデーションする** — 下記「手順 5」。
-6. **README を更新する** — 上の「同梱プラグイン」表に追記する。
+3. **カタログに登録する** — `.claude-plugin/marketplace.json` にエントリ（`./plugins/claude/<name>`）を追加する。
+4. **バリデーションする** — 下記「手順 5」。
+5. **README を更新する** — 上の「同梱プラグイン」表に追記する。
+
+### Codex 版を生成する（必要になったときだけ）
+
+1. Codex に `plugins/claude/<name>/` を読ませ、Codex の仕様に最適化した対応物を `plugins/codex/<name>/` に生成させる（`.codex-plugin/plugin.json` の `name` / `version` は claude 側と一致させる）。
+2. `.agents/plugins/marketplace.json` にエントリ（`./plugins/codex/<name>`）を追加する。
+3. claude 側を大きく変えたあとに Codex 版を使いたくなったら、同じ手順で再生成する。
 
 ---
 
 ## 手順 4: プラグインを更新・再配布する
 
-1. `plugins/claude/<name>/`（および対応する `plugins/codex/<name>/`）配下のファイルを編集する。
-2. `plugins/claude/<name>/.claude-plugin/plugin.json` と `plugins/codex/<name>/.codex-plugin/plugin.json` の `version` を SemVer（MAJOR.MINOR.PATCH）で**揃えて**上げる。
+1. `plugins/claude/<name>/` 配下のファイルを編集する（codex 側は再生成のタイミングでだけ更新する）。
+2. `plugins/claude/<name>/.claude-plugin/plugin.json` の `version` を SemVer（MAJOR.MINOR.PATCH）で上げる。codex 側が存在する場合は再生成時に `version` を揃える。
 3. コミットして push する。
 4. 取得側の操作:
    - Claude Code: `/plugin marketplace update` のあと `/plugin update <name>@agent-plugins`。
@@ -160,7 +155,7 @@ claude plugin validate ./plugins/claude/terraform --strict
 claude plugin validate ./plugins/claude/aws --strict
 claude plugin validate ./plugins/claude/git --strict
 
-# Codex 用カタログ（読み込めることを確認）
+# Codex 用カタログ（codex 側を生成・変更したときだけ）
 # 注意: CODEX_HOME での隔離は効かず、実環境の ~/.codex/config.toml に登録される（codex 0.130 で確認）。
 # ローカル登録は作業ディレクトリを直接参照するため、変更後の再登録は不要（upgrade は Git ソース専用）。
 codex plugin marketplace add "$(pwd)"          # 初回のみ
